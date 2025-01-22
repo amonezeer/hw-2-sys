@@ -5,51 +5,61 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Введіть шлях до програми, яку хочете запустити (наприклад, notepad.exe):");
-        string processPath = Console.ReadLine();
+        Console.BackgroundColor = ConsoleColor.DarkGray;
+        Console.Write("введите путь к выполняемому файлу --> \n");
+        string filePath = Console.ReadLine();
 
-        Process childProcess = new Process();
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            Console.WriteLine("ошибка,путь не может быть пустым");
+            return;
+        }
 
         try
         {
-            childProcess.StartInfo.FileName = processPath;
-            childProcess.Start();
-
-            Console.WriteLine("Дочірній процес запущено.");
-            Console.WriteLine("Оберіть опцію:");
-            Console.WriteLine("1. Дочекатися завершення процесу.");
-            Console.WriteLine("2. Примусово завершити процес.");
-            Console.Write("Ваш вибір: ");
-
-            string choice = Console.ReadLine();
-
-            if (choice == "1")
+            using (Process childProcess = new Process { StartInfo = { FileName = filePath, UseShellExecute = true } })
             {
-                childProcess.WaitForExit();
-                Console.WriteLine($"Процес завершився. Код завершення: {childProcess.ExitCode}");
-            }
-            else if (choice == "2")
-            {
-                childProcess.Kill();
-                Console.WriteLine("Дочірній процес примусово завершено.");
-            }
-            else
-            {
-                Console.WriteLine("Невірний вибір.");
+                childProcess.Start();
+                Console.ResetColor();
+                Console.Write("|---------------------------------------------|\n");
+                Console.BackgroundColor= ConsoleColor.DarkRed;
+                Console.WriteLine($"процесс с PID {childProcess.Id} запущен\n");
+
+                Console.WriteLine("выберите действие:");
+                Console.WriteLine("1. ожидать завершения процесса ");
+                Console.WriteLine("2. принудительно завершить процесс");
+                Console.ResetColor();
+                Console.Write("ваш выбор (1/2): ");
+
+                string choice = Console.ReadLine();
+
+                if (choice == "1")
+                {
+                    childProcess.WaitForExit();
+                    Console.WriteLine($"\nпроцесс завершен с кодом: {childProcess.ExitCode}");
+                }
+                else if (choice == "2")
+                {
+                    if (!childProcess.HasExited)
+                    {
+                        childProcess.Kill();
+                        childProcess.WaitForExit();
+                        Console.WriteLine("процесс принудительно завершен");
+                    }
+                    else
+                    {
+                        Console.WriteLine("процесс уже завершен");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("ошибка,неверный выбор");
+                }
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Помилка: {ex.Message}");
+            Console.WriteLine($"ошибка {ex.Message}");
         }
-        finally
-        {
-            if (childProcess != null && !childProcess.HasExited)
-            {
-                childProcess.Kill();
-            }
-        }
-
-        Console.WriteLine("Програма завершена.");
     }
 }

@@ -1,16 +1,16 @@
-﻿/*using System;
+﻿using System;
 using System.Diagnostics;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Введіть шлях до виконуваного файлу дочірнього процесу:");
+        Console.WriteLine("введите путь к исполняемому файлу дочернего процесса");
         string processPath = Console.ReadLine();
 
         if (string.IsNullOrWhiteSpace(processPath))
         {
-            Console.WriteLine("Шлях до програми не може бути порожнім.");
+            Console.WriteLine("путь к программе не может быть пустым");
             return;
         }
 
@@ -21,15 +21,14 @@ class Program
             process.StartInfo.UseShellExecute = false;
             process.Start();
 
-            Console.WriteLine("Дочірній процес запущено.");
+            Console.WriteLine("дочерний процесс запущен");
             process.WaitForExit();
             int exitCode = process.ExitCode;
-            Console.WriteLine($"Дочірній процес завершено з кодом: {exitCode}");
+            Console.WriteLine($"дочерний процесс завершён с кодом {exitCode}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Виникла помилка: {ex.Message}");
+            Console.WriteLine($"возникла ошибка {ex.Message}");
         }
     }
 }
-*/
